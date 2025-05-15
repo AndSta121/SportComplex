@@ -15,7 +15,7 @@ export class SportService {
     async getSport(id:string): Promise<Sport>{
         const sport = await this.sportRepository.findOne({ where: {id}});
         if(!sport){
-            throw new HttpException('No entitny found', HttpStatus.NOT_FOUND);
+            throw new HttpException('No sport entity found', HttpStatus.NOT_FOUND);
         }
         return sport;
     }

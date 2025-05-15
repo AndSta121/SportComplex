@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { SportService } from './sport.service';
 
 @Controller('sport')
@@ -11,8 +11,8 @@ export class SportController {
         return await this.sportService.getSports();
     }
 
-    @Get()
-    async getSport(id: string){
+    @Get('/:id')
+    async getSport(@Param('id') id:string){
         return await this.sportService.getSport(id);
     }
 }

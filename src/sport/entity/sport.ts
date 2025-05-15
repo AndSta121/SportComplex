@@ -9,6 +9,6 @@ export class Sport {
   @Column({ unique: true })
   name: string;
 
-  @OneToMany(() => SportClass, (cls) => cls.sport, {cascade: true, eager: true})
+  @OneToMany(() => SportClass, (cls) => cls.sport, {cascade: true})
   classes: SportClass[];
 }

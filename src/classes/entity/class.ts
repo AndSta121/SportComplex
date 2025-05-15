@@ -1,5 +1,5 @@
 import { Sport } from "src/sport/entity/sport";
-import { User } from "src/users/entity/user";
+import { User } from "src/auth/entity/user";
 import { Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: 'class'})
@@ -16,7 +16,7 @@ export class SportClass {
   @Column('simple-array') 
   weeklySchedule: string[]; 
 
-  @ManyToOne(() => Sport, (sport) => sport.classes)
+  @ManyToOne(() => Sport, (sport) => sport.classes, {eager: true})
   sport: Sport;
 
   @ManyToMany(() => User, (user) => user.sportClasses, {eager: true})

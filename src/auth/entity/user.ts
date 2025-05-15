@@ -23,10 +23,10 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
+  @Column({ type: 'text', default: UserRole.USER })
   role: UserRole;
 
-  @ManyToMany(() => SportClass, (sportClass) => sportClass.users, { cascade: ['insert', 'update'], eager: true}) 
+  @ManyToMany(() => SportClass, (sportClass) => sportClass.users, { cascade: ['insert', 'update']}) 
   @JoinTable()  // This creates the join table for the many-to-many relationship
   sportClasses: SportClass[];
 }

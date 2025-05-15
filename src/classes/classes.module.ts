@@ -1,8 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ClassesController } from './classes.controller';
 import { ClassesService } from './classes.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { SportClass } from './entity/class';
+import { Sport } from 'src/sport/entity/sport';
 
 @Module({
+  imports: [
+    TypeOrmModule.forFeature([SportClass, Sport])  // ✅ This makes both repositories available
+  ],
   controllers: [ClassesController],
   providers: [ClassesService]
 })
