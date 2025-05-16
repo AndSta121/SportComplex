@@ -23,3 +23,12 @@ export class RegisterDto {
     lastName: string;
 }
 
+export class LoginDto {
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+
+  @IsNotEmpty()
+  password: string;
+}
+

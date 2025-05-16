@@ -6,15 +6,22 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Sport } from './sport/entity/sport';
 import { SportClass } from './classes/entity/class';
 import { User } from './auth/entity/user';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { validate } from './config/env.validation';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: 'db.sqlite',
-      entities: [Sport, SportClass, User],
-      synchronize: true,
-      logging: true,
+    ConfigModule.forRoot({isGlobal: true, validate}), 
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'sqlite',
+        database: configService.get<string>('DB_NAME'),
+        entities: [Sport, SportClass, User],
+        synchronize: false,
+        logging: configService.get<boolean>('DB_LOGGING'),
+      })
+
     }),
     AuthModule,
     SportModule, 
