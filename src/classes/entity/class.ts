@@ -19,6 +19,6 @@ export class SportClass {
   @ManyToOne(() => Sport, (sport) => sport.classes, {eager: true})
   sport: Sport;
 
-  @ManyToMany(() => User, (user) => user.sportClasses, {eager: true})
+  @ManyToMany(() => User, (user) => user.sportClasses)
   users: User[];  
 }

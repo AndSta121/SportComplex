@@ -65,7 +65,8 @@ export class AuthService {
         const [token, refreshToken] = await Promise.all([
             this.jwtService.signAsync(
                 {
-                    sub: user.email,
+                    sub: user.id,
+                    email: user.email,
                     role: user.role,
                 },
                 {
@@ -75,7 +76,8 @@ export class AuthService {
             ),
             this.jwtService.signAsync(
                 {
-                    sub: user.email,
+                    sub: user.id,
+                    email: user.email,
                     role: user.role,
                 },
                 {
@@ -89,5 +91,19 @@ export class AuthService {
             token,
             refreshToken
         };
+    }
+
+    async refreshToken(token: string): Promise<JWTTokens> {
+        try {
+            const { sub: id } = await this.jwtService.verifyAsync(token, {
+                secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
+            });
+            const user = await this.userRepository.findOneOrFail({
+                where: { id },
+            });
+            return this.getTokens(user);
+        } catch (err) {
+            throw new HttpException('Invalid credentials!', 400);
+        }
     }
 }

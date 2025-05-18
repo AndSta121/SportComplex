@@ -4,6 +4,8 @@ import { SportClass } from './entity/class';
 import { Repository } from 'typeorm';
 import { CreateSportClassDto, UpdateSportClassDto } from './dto/class.dto';
 import { Sport } from 'src/sport/entity/sport';
+import { User } from 'src/auth/entity/user';
+import { AppliedUserDto } from 'src/auth/dto/user.dto';
 
 @Injectable()
 export class ClassesService {
@@ -12,7 +14,10 @@ export class ClassesService {
         private classRepository:Repository<SportClass>,
     
         @InjectRepository(Sport)
-        private readonly sportRepository: Repository<Sport>){}
+        private readonly sportRepository: Repository<Sport>,
+    
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>){}
 
     async getClasses(sportName?:string): Promise<SportClass[]>{
         if(sportName){
@@ -29,6 +34,23 @@ export class ClassesService {
         }
 
         return sportClass;
+    }
+
+    async getAppliedUsers(id:string): Promise<AppliedUserDto[]> {
+        const sportClass = await this.classRepository.findOne({
+            where: { id },
+            relations: ['users'],
+        });
+
+        if (!sportClass) {
+            throw new HttpException('No class entity found', HttpStatus.NOT_FOUND);
+        }
+
+        return sportClass.users.map(user => ({
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+        }));
     }
     
     async createClass(createSportClassDto: CreateSportClassDto): Promise<void>{
@@ -110,5 +132,32 @@ export class ClassesService {
     async deleteClass(id: string): Promise<void> {
         await this.classRepository.delete({ id });
     }
+
+    async applyToClass(userId:string, classId: string): Promise<void>{
+        const sportClass = await this.classRepository.findOne({
+            where: { id: classId } 
+        });
+
+        if (!sportClass) {
+        throw new HttpException('No class entity found', HttpStatus.NOT_FOUND);
+        }
+
+        const user = await this.userRepository.findOne({ where: { id: userId } });
+
+        if (!user) {
+        throw new HttpException('No user entity found', HttpStatus.NOT_FOUND);
+        }
+
+        if (sportClass.users.some(existingUser => existingUser.id === userId)) {
+        throw new HttpException(`User with id ${userId} is already enrolled in this class`,
+            HttpStatus.CONFLICT,
+        );
+        }
+
+        sportClass.users.push(user);
+
+        await this.classRepository.save(sportClass);
+    }
+        
 
 }

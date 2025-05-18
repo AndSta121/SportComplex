@@ -13,6 +13,10 @@ class EnvironmentVariables {
   @IsNotEmpty()
   @IsBoolean()
   DB_LOGGING: boolean;
+
+  @IsNotEmpty()
+  @IsBoolean()
+  DB_SYNCHRONIZATION: boolean;
 }
 
 export function validate(config: Record<string, unknown>) {
