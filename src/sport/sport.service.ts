@@ -2,7 +2,6 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Sport } from './entity/sport';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { SportClass } from 'src/classes/entity/class';
 
 @Injectable()
 export class SportService {

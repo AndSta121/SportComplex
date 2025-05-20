@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards, Request, ParseUUIDPipe, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards, Request, ParseUUIDPipe } from '@nestjs/common';
 import { ClassesService } from './classes.service';
 import { CreateSportClassDto, GetClassesQueryDto, UpdateDescriptionDto, UpdateDurationDto, UpdateSportDto, UpdateSportClassDto, UpdateWeeklyScheduleDto } from './dto/class.dto';
 import { AccessTokenGuard } from 'src/auth/guard/access-token-guard';
