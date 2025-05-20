@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User, UserRole } from './entity/user';
@@ -26,7 +26,7 @@ export class AuthService {
         });
 
         if(existingUser) {
-            throw new HttpException('Email already registered!', 400);
+            throw new HttpException('Email already registered!', 409);
         }
 
         const hashedPassword = await this.hashPassword(registerDto.password);
@@ -44,13 +44,13 @@ export class AuthService {
         const user = await this.userRepository.findOne({ where: { email : loginDto.email } });
 
         if (!user) {
-            throw new HttpException('Invalid credentials!', 400);
+            throw new HttpException('Invalid credentials!', 401);
         }
 
         const validPassword = await compare(loginDto.password, user.password);
 
         if (!validPassword) {
-            throw new HttpException('Invalid credentials!', 400);
+            throw new HttpException('Invalid credentials!', 401);
         }
 
         return this.getTokens(user);
@@ -101,9 +101,15 @@ export class AuthService {
             const user = await this.userRepository.findOneOrFail({
                 where: { id },
             });
+            if (!user) {
+                throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+            }
             return this.getTokens(user);
         } catch (err) {
-            throw new HttpException('Invalid credentials!', 400);
+            if (err.name === 'TokenExpiredError') {
+                throw new HttpException('Refresh token has expired', HttpStatus.UNAUTHORIZED);
+            }
+            throw new HttpException('Invalid or malformed refresh token', HttpStatus.UNAUTHORIZED);
         }
     }
 }

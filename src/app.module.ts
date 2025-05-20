@@ -16,7 +16,7 @@ import { validate } from './config/env.validation';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'sqlite',
-        database: configService.get<string>('DB_NAME'),
+        database: configService.get<string>('DB_NAME'), //database: 'db.sqlite' --- if using sqlite db from project 
         entities: [Sport, SportClass, User],
         synchronize: false,
         logging: configService.get<boolean>('DB_LOGGING'),

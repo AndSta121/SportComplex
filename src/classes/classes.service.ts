@@ -130,28 +130,33 @@ export class ClassesService {
     }
 
     async deleteClass(id: string): Promise<void> {
-        await this.classRepository.delete({ id });
+        const result = await this.classRepository.delete({ id });
+
+        if (result.affected === 0) {
+            throw new HttpException('No class entity found', HttpStatus.NOT_FOUND);
+        }
     }
 
     async applyToClass(userId:string, classId: string): Promise<void>{
         const sportClass = await this.classRepository.findOne({
-            where: { id: classId } 
+            where: { id: classId },
+            relations: ['users']
         });
 
         if (!sportClass) {
-        throw new HttpException('No class entity found', HttpStatus.NOT_FOUND);
+            throw new HttpException('No class entity found', HttpStatus.NOT_FOUND);
         }
 
         const user = await this.userRepository.findOne({ where: { id: userId } });
 
         if (!user) {
-        throw new HttpException('No user entity found', HttpStatus.NOT_FOUND);
+            throw new HttpException('No user entity found', HttpStatus.NOT_FOUND);
         }
 
         if (sportClass.users.some(existingUser => existingUser.id === userId)) {
-        throw new HttpException(`User with id ${userId} is already enrolled in this class`,
-            HttpStatus.CONFLICT,
-        );
+            throw new HttpException(`User is already enrolled in this class`,
+                HttpStatus.CONFLICT,
+            );
         }
 
         sportClass.users.push(user);

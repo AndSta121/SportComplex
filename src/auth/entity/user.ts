@@ -27,7 +27,7 @@ export class User {
   role: UserRole;
 
   @ManyToMany(() => SportClass, (sportClass) => sportClass.users, { cascade: ['insert', 'update']}) 
-  @JoinTable()  // This creates the join table for the many-to-many relationship
+  @JoinTable() 
   sportClasses: SportClass[];
 }
 
