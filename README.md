@@ -31,6 +31,28 @@
 $ npm install
 ```
 
+## Project dependencies
+
+```bash
+# TypeORM and SQLite (example)
+$ npm install @nestjs/typeorm typeorm sqlite3
+
+# Configuration management
+npm install @nestjs/config
+
+# Validation
+npm install @nestjs/config class-validator class-transformer
+
+# Authentication
+npm install @nestjs/jwt passport passport-jwt
+
+# Type definitions (for TypeScript)
+npm install --save-dev @types/passport-jwt
+
+# Swagger for API docs
+npm install @nestjs/swagger swagger-ui-express
+```
+
 ## Compile and run the project
 
 ```bash
