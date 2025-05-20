@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SportClass } from './entity/class';
 import { Repository } from 'typeorm';
-import { CreateSportClassDto, UpdateSportClassDto } from './dto/class.dto';
+import { CreateSportClassDto, UpdateSportClassDto, ViewSportClassDto } from './dto/class.dto';
 import { Sport } from 'src/sport/entity/sport';
 import { User } from 'src/auth/entity/user';
 import { AppliedUserDto } from 'src/auth/dto/user.dto';
@@ -19,21 +19,37 @@ export class ClassesService {
         @InjectRepository(User)
         private readonly userRepository: Repository<User>){}
 
-    async getClasses(sportName?:string): Promise<SportClass[]>{
-        if(sportName){
-            return this.classRepository.find({where: {sport: {name: sportName}}});
-        }
+    async getClasses(sportName?:string): Promise<ViewSportClassDto[]>{
+        const classes = await this.classRepository.find({
+            where: sportName ? { sport: { name: sportName } } : {},
+            relations: ['sport'],
+        });
 
-        return this.classRepository.find();
+        return classes.map((cls) => ({
+            id: cls.id,
+            description: cls.description,
+            duration: cls.duration,
+            weeklySchedule: cls.weeklySchedule,
+            sportName: cls.sport.name,
+        }));
     }
 
-    async getClass(id:string): Promise<SportClass>{
-        const sportClass = await this.classRepository.findOne({where: {id}});
+    async getClass(id:string): Promise<ViewSportClassDto>{
+        const sportClass = await this.classRepository.findOne({
+            where: {id},
+            relations: ['sport'],
+        });
         if(!sportClass){
             throw new HttpException('No class entity found', HttpStatus.NOT_FOUND);
         }
 
-        return sportClass;
+        return {
+            id: sportClass.id,
+            description: sportClass.description,
+            duration: sportClass.duration,
+            weeklySchedule: sportClass.weeklySchedule,
+            sportName: sportClass.sport.name,
+        };
     }
 
     async getAppliedUsers(id:string): Promise<AppliedUserDto[]> {

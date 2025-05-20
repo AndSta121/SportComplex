@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards, Request, ParseUUIDPipe } from '@nestjs/common';
 import { ClassesService } from './classes.service';
-import { CreateSportClassDto, GetClassesQueryDto, UpdateDescriptionDto, UpdateDurationDto, UpdateSportDto, UpdateSportClassDto, UpdateWeeklyScheduleDto } from './dto/class.dto';
+import { CreateSportClassDto, GetClassesQueryDto, UpdateDescriptionDto, UpdateDurationDto, UpdateSportDto, UpdateSportClassDto, UpdateWeeklyScheduleDto, ViewSportClassDto } from './dto/class.dto';
 import { AccessTokenGuard } from 'src/auth/guard/access-token-guard';
 import { Role } from 'src/auth/decorators/role';
 import { UserRole } from 'src/auth/entity/user';
@@ -15,15 +15,16 @@ export class ClassesController {
 
     @Get()
     @ApiOperation({ summary: 'Get all classes (optional filter by sport)' })
-    @ApiResponse({ status: 200, description: 'OK. List of sport classes' })
+    @ApiResponse({ status: 200, description: 'OK. List of sport classes', type: [ViewSportClassDto] })
     @ApiResponse({ status: 400, description: 'Bad request. Sport must be one of the following values: Football, Basketball, Baseball' })
-    async getClasses(@Query() { sport }: GetClassesQueryDto){
+    async getClasses(@Query() query: GetClassesQueryDto) {
+        const { sport } = query;
         return await this.classService.getClasses(sport);
     }
 
     @Get('/:id')
     @ApiOperation({ summary: 'Get class by ID' })
-    @ApiResponse({ status: 200, description: 'OK. Class detials' })
+    @ApiResponse({ status: 200, description: 'OK. Class detials', type: [ViewSportClassDto] })
     @ApiResponse({ status: 400, description: 'Bad request. Validation failed (uuid is expected)' })
     async getClass(@Param('id', new ParseUUIDPipe()) id:string){
         return await this.classService.getClass(id);

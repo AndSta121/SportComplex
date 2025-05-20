@@ -16,7 +16,7 @@ export class SportClass {
   @Column('simple-array') 
   weeklySchedule: string[]; 
 
-  @ManyToOne(() => Sport, (sport) => sport.classes, {eager: true})
+  @ManyToOne(() => Sport, (sport) => sport.classes)
   sport: Sport;
 
   @ManyToMany(() => User, (user) => user.sportClasses)

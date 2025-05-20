@@ -24,6 +24,23 @@ export class CreateSportClassDto{
     sportId: string; 
 }
 
+export class ViewSportClassDto {
+    @ApiProperty()
+    id: string;
+
+    @ApiProperty()
+    description: string;
+
+    @ApiProperty()
+    duration: string;
+
+    @ApiProperty({ type: [String] })
+    weeklySchedule: string[];
+
+    @ApiProperty({ example: 'Football' })
+    sportName: string; 
+}
+
 export class UpdateSportClassDto {
     @IsOptional()
     @IsString()
